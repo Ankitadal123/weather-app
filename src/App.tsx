@@ -4,6 +4,7 @@ import WeatherDetails from './components/WeatherDetails';
 import ForecastGrid from './components/ForecastGrid';
 import { useWeather } from './hooks/useWeather';
 import HistoricalLast3 from './components/HistoricalLast3';
+import type { WeatherData } from './types/weather';
 
 
 function App() {
@@ -11,6 +12,17 @@ function App() {
 
 const [location, setLocation] = useState<string>('Pretoria');
 const { data, loading } = useWeather(location);
+const view: 'daily' | 'hourly' = 'daily';
+
+
+// NEW: selected display override (from clicks)
+const [selected, setSelected] = useState<WeatherData | null>(null);
+
+// When a tile is clicked, we set the selected display
+const handleSelectDisplay = (w: WeatherData) => setSelected(w);
+const clearSelection = () => setSelected(null);
+
+const display = selected ?? data; // what WeatherDetails should show
 
 const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   setLocation(e.target.value);
@@ -47,13 +59,30 @@ const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         </select>
 
         {loading && <p className="text-center text-blue-200">Loading...</p>}
-        {data && (
-          <>
-            <WeatherDetails weather={data} />
-             <ForecastGrid /> 
+      {display && (
+        <>
+          {/* optional clear pill when a selection is active */}
+          {selected && (
+            <div className="flex justify-center mb-3">
+              <button
+                onClick={clearSelection}
+                className="text-xs bg-blue-800/60 hover:bg-blue-800 px-3 py-1 rounded"
+              >
+                Clear selection
+              </button>
+            </div>
+          )}
+    <WeatherDetails weather={display} />
 
-  {/* Last 3 days historical via API */}
-  <HistoricalLast3 location={location} />
+{/* pass the base current data so tiles can compose a display payload */}
+{view === 'daily' ? (
+  <ForecastGrid base={data!} onSelect={handleSelectDisplay} />
+) : (
+  <p className="text-center text-blue-200">Hourly forecast coming soon…</p>
+)}
+
+{/* if you’re rendering last-3-days historical, also pass onSelect */}
+{<HistoricalLast3 location={location} base={data!} onSelect={handleSelectDisplay} /> }
           </>
         )}
       </div>
