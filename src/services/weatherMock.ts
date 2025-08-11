@@ -11,4 +11,10 @@ export const mockForecast = [
     { day: '2 Days Ago', temp: 20 },
     { day: 'Yesterday', temp: 21 },
   ];
-  
+  import type { ForecastItem } from '../types/weather';
+
+export const threeDayForecast: ForecastItem[] = [
+  { day: 'Today',     temp: 24 },
+  { day: 'Tomorrow',  temp: 25 },
+  { day: 'Day After', temp: 23 },
+];

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import WeatherDetails from './components/WeatherDetails';
 import ForecastGrid from './components/ForecastGrid';
 import { useWeather } from './hooks/useWeather';
+import HistoricalLast3 from './components/HistoricalLast3';
+
 
 function App() {
   const cities = ['Pretoria', 'Cape Town', 'Durban', 'Johannesburg', 'Port Elizabeth'];
@@ -48,7 +50,10 @@ const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         {data && (
           <>
             <WeatherDetails weather={data} />
-            <ForecastGrid />
+             <ForecastGrid /> 
+
+  {/* Last 3 days historical via API */}
+  <HistoricalLast3 location={location} />
           </>
         )}
       </div>
