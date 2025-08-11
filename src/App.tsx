@@ -5,12 +5,14 @@ import ForecastGrid from './components/ForecastGrid';
 import { useWeather } from './hooks/useWeather';
 import HistoricalLast3 from './components/HistoricalLast3';
 import type { WeatherData } from './types/weather';
+import { loadLastCity, saveLastCity } from './utils/prefs';
+
 
 
 function App() {
   const cities = ['Pretoria', 'Cape Town', 'Durban', 'Johannesburg', 'Port Elizabeth'];
 
-const [location, setLocation] = useState<string>('Pretoria');
+const [location, setLocation] = useState<string>(loadLastCity() || 'Pretoria');
 const { data, loading } = useWeather(location);
 const view: 'daily' | 'hourly' = 'daily';
 
@@ -25,7 +27,9 @@ const clearSelection = () => setSelected(null);
 const display = selected ?? data; // what WeatherDetails should show
 
 const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  setLocation(e.target.value);
+  const city = e.target.value;
+  setLocation(city);
+  saveLastCity(city);
 };
 
 
